@@ -1,9 +1,10 @@
 
-import { Clock, Quote, Bell, Timer, MapPin, Loader2, VolumeX, Sunrise, Sun, CloudSun, Moon, CloudMoon, Volume2, XCircle, AlertCircle, Play } from 'lucide-react';
+import { Clock, Quote, Bell, Timer, MapPin, VolumeX, Sunrise, Sun, CloudSun, Moon, CloudMoon, Volume2, XCircle, AlertCircle, Play } from 'lucide-react';
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { PrayerTime, Translation, ThemeColor, Language, TimeFormat, NumberFormat, LoadingVariant } from '../types';
 import { THEMES, WISDOMS, MUEZZINS, formatDigits } from '../constants';
+import AppLoader from './AppLoader';
 
 interface PrayerTimesProps {
   translations: Translation;
@@ -116,7 +117,7 @@ const PrayerTimes: React.FC<PrayerTimesProps> = ({
       case 'isha': icon = <Moon {...iconProps} />; break;
       default: icon = <Clock {...iconProps} />;
     }
-    return <motion.div animate={{ scale: [1, 1.1, 1] }} transition={{ duration: 5, repeat: Infinity }}>{icon}</motion.div>;
+    return <div>{icon}</div>;
   };
 
   const fetchTimings = useCallback(async (lat: number, lng: number, isDefault = false) => {
@@ -208,7 +209,7 @@ const PrayerTimes: React.FC<PrayerTimesProps> = ({
 
   if (loading && prayers.length === 0) return (
     <div className="flex flex-col items-center justify-center p-20 py-40">
-      <Loader2 size={60} className={`animate-spin ${isDark ? 'text-amber-400' : 'text-emerald-600'}`} />
+      <AppLoader size="lg" />
       <p className="animate-pulse opacity-70 mt-12 font-black font-arabic text-xl">{translations.detectingLocation}</p>
     </div>
   );

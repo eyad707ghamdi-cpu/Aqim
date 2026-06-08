@@ -1,11 +1,12 @@
 
 import React, { useState, useEffect, useRef } from 'react';
-import { Sun, Moon, Palette, Check, Info, MessageSquare, Mail, Smartphone, Star, Loader2, Send, Globe, Hash, ShieldCheck, Lock, Unlock, Heart, Clock, BellRing, Flag, Trash2, History, UserCheck, ChevronLeft, ChevronRight, X, Edit3, Eye, ShieldAlert, CheckCircle2, AlertTriangle, CornerDownLeft, Shield, Coins, Sparkles, LogOut, LogIn, User, MessageCircle, Type, ChevronDown, BadgeCheck, ExternalLink, Zap } from 'lucide-react';
+import { Sun, Moon, Palette, Check, Info, MessageSquare, Mail, Smartphone, Star, Send, Globe, Hash, ShieldCheck, Lock, Unlock, Heart, Clock, BellRing, Flag, Trash2, History, UserCheck, ChevronLeft, ChevronRight, X, Edit3, Eye, ShieldAlert, CheckCircle2, AlertTriangle, CornerDownLeft, Shield, Coins, Sparkles, LogOut, LogIn, User, MessageCircle, Type, ChevronDown, BadgeCheck, ExternalLink, Zap } from 'lucide-react';
 import { Translation, UserSettings, ThemeColor, Language, Suggestion, FontFamily } from '../types';
 import { THEMES, themeOptions, formatDigits, FONT_OPTIONS } from '../constants';
 import { motion, AnimatePresence } from 'framer-motion';
 import { sendToTelegram } from '../services/telegramService';
 import { db, collection, addDoc, onSnapshot, query, orderBy, doc, updateDoc, deleteDoc, increment } from '../services/firebase';
+import AppLoader from './AppLoader';
 
 interface SettingsProps {
   translations: Translation;
@@ -176,7 +177,7 @@ const Settings: React.FC<SettingsProps> = ({ translations, settings, updateSetti
   };
 
   return (
-    <div className="space-y-8 pb-32">
+    <div className="space-y-8 pb-40">
       <AnimatePresence>
         {isEditingName && (
            <div className="fixed inset-0 z-[350] flex items-center justify-center p-6">
@@ -197,7 +198,7 @@ const Settings: React.FC<SettingsProps> = ({ translations, settings, updateSetti
                 />
                 <div className="flex gap-2 pt-2">
                   <button onClick={handleUpdateName} disabled={nameUpdateLoading} className={`flex-1 py-4 rounded-xl font-black ${isDark ? 'bg-amber-400 text-zinc-950' : 'bg-emerald-600 text-white'}`}>
-                    {nameUpdateLoading ? <Loader2 className="animate-spin mx-auto" /> : (isRtl ? "حفظ" : "Save")}
+                    {nameUpdateLoading ? <AppLoader size="sm" className="mx-auto" /> : (isRtl ? "حفظ" : "Save")}
                   </button>
                   <button onClick={() => setIsEditingName(false)} disabled={nameUpdateLoading} className={`px-6 py-4 rounded-xl font-black ${isDark ? 'bg-zinc-800 text-zinc-400' : 'bg-gray-100 text-gray-500'}`}>
                     {isRtl ? "إلغاء" : "Cancel"}
@@ -216,7 +217,7 @@ const Settings: React.FC<SettingsProps> = ({ translations, settings, updateSetti
               <h3 className="text-2xl font-black mb-2">{isRtl ? "هل أنت متأكد؟" : "Are you sure?"}</h3>
               <p className="opacity-60 mb-8">{isRtl ? "سيتم حذف هذا الاقتراح نهائياً." : "This suggestion will be permanently deleted."}</p>
               <div className="flex flex-col gap-3">
-                <button onClick={executeDelete} disabled={isDeleting} className="w-full py-4 rounded-2xl bg-red-600 text-white font-black flex items-center justify-center gap-2">{isDeleting ? <Loader2 className="animate-spin" size={20} /> : (isRtl ? "نعم، احذف" : "Yes, Delete")}</button>
+                <button onClick={executeDelete} disabled={isDeleting} className="w-full py-4 rounded-2xl bg-red-600 text-white font-black flex items-center justify-center gap-2">{isDeleting ? <AppLoader size="sm" /> : (isRtl ? "نعم، احذف" : "Yes, Delete")}</button>
                 <button onClick={() => setDeleteConfirmId(null)} disabled={isDeleting} className="w-full py-4 rounded-2xl bg-gray-100 dark:bg-zinc-800 font-black">{isRtl ? "تراجع" : "Cancel"}</button>
               </div>
             </motion.div>
@@ -323,62 +324,83 @@ const Settings: React.FC<SettingsProps> = ({ translations, settings, updateSetti
       <section className={`${currentTheme.card} p-8 rounded-[3.5rem] border ${currentTheme.border} shadow-sm space-y-6 relative`}>
         <div className="flex items-center gap-4">
           <div className={`p-3 rounded-2xl ${isDark ? 'bg-zinc-800 text-amber-400' : 'bg-gray-50 text-emerald-600'}`}>
-            <Type size={22} />
+            <Sun size={22} className={isDark ? 'hidden' : 'block'} />
+            <Moon size={22} className={isDark ? 'block' : 'hidden'} />
           </div>
-          <h3 className={`text-xl font-black ${currentTheme.textMain}`}>{translations.fontFamilyLabel}</h3>
+          <h3 className={`text-xl font-black ${currentTheme.textMain}`}>{isRtl ? "المظهر واللغة" : "Appearance & Language"}</h3>
         </div>
-        
-        <div className="relative">
-          <button
-            onClick={() => setIsFontMenuOpen(!isFontMenuOpen)}
-            style={{ fontFamily: currentFont.family }}
-            className={`w-full p-6 rounded-2xl border-2 flex items-center justify-between transition-all group ${
-              isDark ? 'bg-zinc-900 border-zinc-800 text-amber-400' : 'bg-gray-50 border-gray-100 text-emerald-900 shadow-sm'
-            }`}
-          >
-            <div className="flex flex-col items-start">
-              <span className="text-lg font-black">{currentFont.name}</span>
-              <span className="text-[10px] opacity-40 font-bold uppercase tracking-widest">{isRtl ? 'معاينة الخط' : 'Font Preview'}</span>
-            </div>
-            <ChevronDown size={24} className={`transition-transform duration-300 ${isFontMenuOpen ? 'rotate-180' : ''}`} />
-          </button>
 
-          <AnimatePresence>
-            {isFontMenuOpen && (
-              <motion.div
-                initial={{ opacity: 0, y: -10, scale: 0.95 }}
-                animate={{ opacity: 1, y: 10, scale: 1 }}
-                exit={{ opacity: 0, y: -10, scale: 0.95 }}
-                className={`absolute left-0 right-0 z-[100] mt-2 p-3 rounded-3xl border shadow-2xl ${isDark ? 'bg-zinc-900 border-zinc-800' : 'bg-white border-gray-100'}`}
+        <div className="space-y-6">
+          {/* Appearance Toggle */}
+          <div className="flex items-center justify-between p-4 rounded-2xl bg-zinc-100 dark:bg-zinc-800/50">
+            <div>
+              <p className="text-sm font-black">{isRtl ? "الوضع الليلي" : "Dark Mode"}</p>
+              <p className="text-[10px] opacity-40 font-bold uppercase tracking-widest">{isRtl ? "تغيير مظهر التطبيق" : "Change app appearance"}</p>
+            </div>
+            <button 
+              onClick={() => updateSettings({ isDarkMode: !isDark })}
+              className={`w-14 h-8 rounded-full relative transition-all duration-300 ${isDark ? 'bg-amber-400 shadow-[0_0_15px_rgba(251,191,36,0.5)]' : 'bg-gray-300'}`}
+            >
+              <motion.div 
+                animate={{ x: isDark ? 28 : 4 }}
+                className="absolute top-1 left-0 w-6 h-6 rounded-full bg-white shadow-md flex items-center justify-center"
               >
-                <div className="grid grid-cols-1 gap-2">
-                  {FONT_OPTIONS.map((font) => (
-                    <button
-                      key={font.id}
-                      onClick={() => {
-                        updateSettings({ fontFamily: font.id });
-                        setIsFontMenuOpen(false);
-                        if ('vibrate' in navigator) navigator.vibrate(10);
-                      }}
-                      style={{ fontFamily: font.family }}
-                      className={`w-full p-5 rounded-2xl text-right flex items-center justify-between transition-all group ${
-                        settings.fontFamily === font.id
-                        ? (isDark ? 'bg-amber-400 text-zinc-950' : 'bg-emerald-600 text-white')
-                        : (isDark ? 'hover:bg-zinc-800 text-zinc-300' : 'hover:bg-gray-50 text-zinc-900')
-                      }`}
-                    >
-                      <span className="text-base font-bold">{font.name}</span>
-                      {settings.fontFamily === font.id && <Check size={20} />}
-                    </button>
-                  ))}
-                </div>
+                {isDark ? <Moon size={12} className="text-amber-600" /> : <Sun size={12} className="text-gray-400" />}
               </motion.div>
-            )}
-          </AnimatePresence>
+            </button>
+          </div>
+
+          {/* Accent Colors */}
+          <div className="space-y-3">
+             <p className="text-xs font-black opacity-40 uppercase tracking-widest px-2">{isRtl ? "لون التمييز" : "Accent Color"}</p>
+             <div className="flex flex-wrap gap-3 p-4 rounded-2xl bg-zinc-100 dark:bg-zinc-800/50">
+                {themeOptions.map((color) => (
+                  <button
+                    key={color}
+                    onClick={() => updateSettings({ accentColor: color })}
+                    className={`w-8 h-8 rounded-full transition-all active:scale-90 relative ${THEMES[color].primary} ${settings.accentColor === color ? 'ring-4 ring-offset-2 ring-offset-transparent ring-zinc-400 dark:ring-zinc-600 scale-110' : 'hover:scale-105'}`}
+                  >
+                    {settings.accentColor === color && (
+                      <div className="absolute inset-0 flex items-center justify-center text-white">
+                        <Check size={14} strokeWidth={4} />
+                      </div>
+                    )}
+                  </button>
+                ))}
+             </div>
+          </div>
+
+          {/* Language Selection */}
+          <div className="space-y-3">
+            <p className="text-xs font-black opacity-40 uppercase tracking-widest px-2">{isRtl ? "لغة التطبيق" : "App Language"}</p>
+            <div className="grid grid-cols-2 gap-3">
+              {[
+                { id: 'ar', name: 'العربية', flag: '🇸🇦' },
+                { id: 'en', name: 'English', flag: '🇺🇸' }
+              ].map((lang) => (
+                <button
+                  key={lang.id}
+                  onClick={() => updateSettings({ language: lang.id as Language })}
+                  className={`p-4 rounded-2xl border-2 flex items-center justify-center gap-3 transition-all font-black ${
+                    settings.language === lang.id 
+                    ? (isDark ? 'bg-amber-400 border-amber-400 text-zinc-950' : 'bg-emerald-600 border-emerald-600 text-white shadow-lg shadow-emerald-500/20')
+                    : (isDark ? 'bg-zinc-800/50 border-zinc-800 text-zinc-400 hover:border-zinc-700' : 'bg-white border-gray-100 text-zinc-600 hover:border-gray-200 shadow-sm')
+                  }`}
+                >
+                  <span className="text-lg">{lang.flag}</span>
+                  <span>{lang.name}</span>
+                  {settings.language === lang.id && <CheckCircle2 size={16} />}
+                </button>
+              ))}
+            </div>
+            <p className="text-[10px] font-bold opacity-30 text-center uppercase tracking-tighter mt-2">
+              {isRtl ? "سيتم دعم لغات إضافية قريباً" : "More languages coming soon"}
+            </p>
+          </div>
         </div>
       </section>
 
-      {/* ديني بلس - القائمة المحدثة */}
+      {/* Subscription Section */}
       <section className={`${currentTheme.card} p-8 rounded-[3.5rem] border ${currentTheme.border} shadow-sm overflow-hidden relative`}>
         <div className="absolute -top-10 -left-10 opacity-5 rotate-12">
            <Zap size={200} fill="currentColor" />
@@ -422,7 +444,7 @@ const Settings: React.FC<SettingsProps> = ({ translations, settings, updateSetti
                 disabled={settings.points < PLUS_COST || redeemLoading}
                 className={`w-full py-6 rounded-[2.5rem] font-black text-xl shadow-2xl flex items-center justify-center gap-4 transition-all active:scale-95 disabled:grayscale disabled:opacity-50 ${isDark ? 'bg-amber-400 text-zinc-950' : 'bg-emerald-600 text-white'}`}
               >
-                {redeemLoading ? <Loader2 className="animate-spin" /> : (
+                {redeemLoading ? <AppLoader size="sm" /> : (
                   <>
                     <Coins size={28} />
                     {isRtl ? `استبدال بـ ${formatDigits(PLUS_COST, settings.numberFormat)} نقطة` : `Redeem for ${PLUS_COST} pts`}
@@ -474,7 +496,7 @@ const Settings: React.FC<SettingsProps> = ({ translations, settings, updateSetti
             </div>
             <textarea required value={suggestionText} onChange={(e) => setSuggestionText(e.target.value)} placeholder={translations.suggestionPlaceholder} disabled={isSending} className={`w-full min-h-[120px] p-5 rounded-2xl border-2 outline-none transition-all ${isDark ? 'bg-zinc-800 border-zinc-700 text-white focus:border-amber-400' : 'bg-gray-50 border-gray-200 focus:border-emerald-500'}`} />
             {error && <p className="text-red-500 text-xs font-bold bg-red-500/10 p-3 rounded-xl flex items-center gap-2"><ShieldAlert size={14} /> {error}</p>}
-            <button type="submit" disabled={isSending || !suggestionText.trim() || !settings.userName} className={`w-full py-5 rounded-2xl bg-emerald-600 text-white font-black shadow-lg flex items-center justify-center gap-3 transition-all active:scale-95 disabled:opacity-50`}>{isSending ? <Loader2 className="animate-spin" /> : <><Send size={20} /> {translations.sendSuggestion}</>}</button>
+            <button type="submit" disabled={isSending || !suggestionText.trim() || !settings.userName} className={`w-full py-5 rounded-2xl bg-emerald-600 text-white font-black shadow-lg flex items-center justify-center gap-3 transition-all active:scale-95 disabled:opacity-50`}>{isSending ? <AppLoader size="sm" /> : <><Send size={20} /> {translations.sendSuggestion}</>}</button>
           </form>
         </div>
 
@@ -520,7 +542,7 @@ const Settings: React.FC<SettingsProps> = ({ translations, settings, updateSetti
                       <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="mb-4 space-y-3 pt-4 border-t border-zinc-800/10">
                         <textarea value={devReplyText} onChange={(e) => setDevReplyText(e.target.value)} placeholder={isRtl ? "اكتب رد المطور..." : "Developer reply..."} className={`w-full p-4 rounded-xl border-2 outline-none text-sm font-arabic ${isDark ? 'bg-zinc-800 border-zinc-700 text-white' : 'bg-gray-50 border-gray-200'}`} />
                         <div className="flex gap-2">
-                          <button onClick={() => handleDevReply(s.id)} disabled={isReplying} className="px-6 py-2 bg-emerald-600 text-white rounded-lg text-[10px] font-black flex items-center gap-2">{isReplying ? <Loader2 size={12} className="animate-spin" /> : (isRtl ? "إرسال الرد" : "Send Reply")}</button>
+                          <button onClick={() => handleDevReply(s.id)} disabled={isReplying} className="px-6 py-2 bg-emerald-600 text-white rounded-lg text-[10px] font-black flex items-center gap-2">{isReplying ? <AppLoader size="sm" /> : (isRtl ? "إرسال الرد" : "Send Reply")}</button>
                           <button onClick={() => setReplyingSugId(null)} className="px-6 py-2 bg-gray-400 text-white rounded-lg text-[10px] font-black">{isRtl ? "إلغاء" : "Cancel"}</button>
                         </div>
                       </motion.div>

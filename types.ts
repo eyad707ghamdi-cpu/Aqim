@@ -5,7 +5,7 @@ export type TimeFormat = '12h' | '24h';
 export type NumberFormat = 'arabic' | 'latin';
 export type SubscriptionTier = 'none' | 'plus';
 export type LoadingVariant = 'default' | 'continuous';
-export type FontFamily = 'noto' | 'amiri' | 'cairo' | 'almarai' | 'tajawal';
+export type FontFamily = 'noto' | 'amiri' | 'cairo' | 'almarai' | 'tajawal' | 'system';
 
 // Added AuthUser interface to fix missing import in AuthModal.tsx
 export interface AuthUser {
@@ -57,32 +57,6 @@ export interface PrayerTime {
   key: string;
 }
 
-export interface Comment {
-  id: string;
-  ownerId: string;
-  name?: string;
-  age?: string;
-  message: string;
-  originalMessage?: string;
-  timestamp: number;
-  likes: number;
-  reports: number;
-  isDeveloper?: boolean;
-}
-
-export interface CommunityReply {
-  id: string;
-  postId: string;
-  ownerId: string;
-  name: string;
-  message: string;
-  image?: string;
-  timestamp: number;
-  likes: number;
-  isDeveloper: boolean;
-  replyToName?: string;
-}
-
 export interface Suggestion {
   id: string;
   ownerId: string;
@@ -120,7 +94,6 @@ export interface UserSettings {
 
 export interface Translation {
   title: string;
-  community: string;
   addComment: string;
   nameOptional: string;
   nameRequired: string; 

@@ -35,7 +35,7 @@ const Athkar: React.FC<AthkarProps> = ({ translations, language, theme, numberFo
 
   if (selectedCategory) {
     return (
-      <motion.div initial={{ opacity: 0, x: isRtl ? -20 : 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-6 pb-20 max-w-4xl mx-auto">
+      <motion.div initial={{ opacity: 0, x: isRtl ? -20 : 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-6 pb-40 max-w-4xl mx-auto">
         <div className="sticky top-20 z-20 bg-opacity-80 backdrop-blur-md py-6 px-2">
           <button onClick={() => setSelectedCategory(null)} className={`flex items-center gap-3 mb-4 ${currentTheme.textMuted} font-black text-lg bg-white/20 dark:bg-black/20 px-6 py-3 rounded-full shadow-sm`}>
             {isRtl ? <ChevronRight size={22} /> : <ChevronLeft size={22} />}
@@ -71,7 +71,7 @@ const Athkar: React.FC<AthkarProps> = ({ translations, language, theme, numberFo
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pb-20">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pb-40">
       {categories.map((cat) => (
         <button key={cat.id} onClick={() => setSelectedCategory(cat)} className={`${currentTheme.card} p-12 sm:p-16 border ${theme === 'dark' ? 'border-zinc-800' : 'border-gray-100'} rounded-[3.5rem] hover:scale-[1.03] transition-all group flex items-center justify-between relative overflow-hidden shadow-sm hover:shadow-xl`}>
           <div className="relative z-10 text-right">

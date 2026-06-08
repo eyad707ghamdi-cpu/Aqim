@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Globe, Palette, ArrowRight, ArrowLeft, User, Hash, Info, Loader2, AlertCircle, Sparkles, Check } from 'lucide-react';
+import { Globe, Palette, ArrowRight, ArrowLeft, User, Hash, Info, AlertCircle, Sparkles, Check } from 'lucide-react';
 import { Language, ThemeColor, UserSettings } from '../types';
 import { THEMES, TRANSLATIONS, themeOptions } from '../constants';
-import { CrescentStarIcon } from './Icons';
+import AppLoader from './AppLoader';
 
 interface OnboardingProps {
   onComplete: (settings: Partial<UserSettings>, startTour?: boolean) => void;
@@ -48,7 +48,7 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete, isTouring = false, 
     return (
       <div className="fixed inset-0 z-[500] bg-zinc-950 flex flex-col items-center justify-center text-center p-10 overflow-hidden">
         <motion.div initial={{ scale: 0.5, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="relative mb-10">
-          <CrescentStarIcon size={160} className="text-emerald-500 drop-shadow-[0_0_40px_rgba(16,185,129,0.3)]" />
+          <AppLoader size="lg" />
         </motion.div>
         <motion.h1 initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="text-5xl font-black text-white arabic-text mb-4">أقِم</motion.h1>
         <motion.p initial={{ opacity: 0 }} animate={{ opacity: 0.5 }} className="text-xs text-white/60 tracking-[0.5em] uppercase">Welcome Home</motion.p>
@@ -152,7 +152,7 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete, isTouring = false, 
                   </div>
                   <div className={`w-12 h-6 rounded-full relative transition-colors ${tempSettings.isDarkMode ? (isDark ? 'bg-amber-400' : 'bg-emerald-500') : 'bg-gray-300'}`}>
                     <motion.div 
-                      animate={{ x: tempSettings.isDarkMode ? (isRtl ? -24 : 24) : 0 }}
+                      animate={{ x: tempSettings.isDarkMode ? 24 : 0 }}
                       className="absolute top-1 left-1 w-4 h-4 rounded-full bg-white shadow-sm" 
                     />
                   </div>

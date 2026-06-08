@@ -1,10 +1,9 @@
 
 import React, { useState, useEffect } from 'react';
-import { RotateCcw, Check, X } from 'lucide-react';
+import { RotateCcw, Check, X, Moon, Star } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Translation, ThemeColor, NumberFormat } from '../types';
 import { THEMES, formatDigits } from '../constants';
-import { CrescentStarIcon } from './Icons';
 
 interface TasbihProps {
   translations: Translation;
@@ -111,8 +110,10 @@ const Tasbih: React.FC<TasbihProps> = ({ translations, theme, numberFormat = 'la
             
             <motion.div
               animate={isResetting ? { rotate: 720, scale: 1.5 } : { rotate: 0, scale: 1 }}
+              className="relative flex items-center justify-center mt-4"
             >
-              <CrescentStarIcon className="w-8 h-8 md:w-10 md:h-10 mt-2 opacity-50" fill="currentColor" />
+              <Moon size={32} className="opacity-40" fill="currentColor" />
+              <Star size={12} className="absolute -top-1 -right-1 text-amber-300 opacity-80" fill="currentColor" />
             </motion.div>
           </div>
         </motion.button>

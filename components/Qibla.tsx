@@ -1,9 +1,10 @@
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Navigation, MapPin, Loader2, Compass, Smartphone, AlertCircle } from 'lucide-react';
+import { Navigation, MapPin, Compass, Smartphone, AlertCircle, Camera, X } from 'lucide-react';
 import { Translation, ThemeColor, NumberFormat } from '../types';
 import { THEMES, formatDigits } from '../constants';
+import AppLoader from './AppLoader';
 
 interface QiblaProps {
   translations: Translation;
@@ -19,6 +20,8 @@ const Qibla: React.FC<QiblaProps> = ({ translations, theme, numberFormat = 'lati
   const [loading, setLoading] = useState(true);
   const [needsPermission, setNeedsPermission] = useState(false);
   const [isCompassActive, setIsCompassActive] = useState(false);
+  const [arMode, setArMode] = useState(false);
+  const videoRef = useRef<HTMLVideoElement>(null);
 
   const currentTheme = THEMES[theme];
   const activeNumberFormat = numberFormat as NumberFormat;
@@ -64,10 +67,31 @@ const Qibla: React.FC<QiblaProps> = ({ translations, theme, numberFormat = 'lati
         setError("فشل طلب الإذن");
       }
     } else {
-      // Fixed: Separated addEventListener calls to avoid testing void return for truthiness
       window.addEventListener('deviceorientationabsolute', handleOrientation, true);
       window.addEventListener('deviceorientation', handleOrientation, true);
       setIsCompassActive(true);
+    }
+  };
+
+  const toggleArMode = async () => {
+    if (arMode) {
+      setArMode(false);
+      if (videoRef.current && videoRef.current.srcObject) {
+        const tracks = (videoRef.current.srcObject as MediaStream).getTracks();
+        tracks.forEach(t => t.stop());
+        videoRef.current.srcObject = null;
+      }
+    } else {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+        if (videoRef.current) {
+          videoRef.current.srcObject = stream;
+        }
+        setArMode(true);
+        if (!isCompassActive) startCompass();
+      } catch (err) {
+        setError("لا يمكن الوصول للكاميرا");
+      }
     }
   };
 
@@ -113,20 +137,74 @@ const Qibla: React.FC<QiblaProps> = ({ translations, theme, numberFormat = 'lati
     return () => {
       window.removeEventListener('deviceorientation', handleOrientation);
       window.removeEventListener('deviceorientationabsolute', handleOrientation);
+      if (videoRef.current && videoRef.current.srcObject) {
+        const tracks = (videoRef.current.srcObject as MediaStream).getTracks();
+        tracks.forEach(t => t.stop());
+      }
     };
   }, [translations.allowLocation]);
 
   // الزاوية النهائية للإبرة = اتجاه القبلة من الشمال - اتجاه الجهاز الحالي من الشمال
   const finalNeedleRotation = qiblaDegrees !== null ? qiblaDegrees - deviceHeading : 0;
+  
+  // AR Kaaba position
+  // Field of view approx 60 degrees. Let's calculate horizontal offset.
+  const angleDiff = qiblaDegrees !== null ? ((qiblaDegrees - deviceHeading + 540) % 360) - 180 : 0;
+  const isKaabaVisible = Math.abs(angleDiff) < 45; // Visible within 45 degrees
+  const translateX = angleDiff * 8; // Adjust multiplier as needed for screen width
 
   return (
-    <div className="flex flex-col items-center justify-center space-y-8 py-12 px-4">
-      <div className="text-center max-w-sm">
-        <h2 className={`text-3xl md:text-4xl font-black mb-2 ${currentTheme.textMain}`}>{translations.qibla}</h2>
-        <p className={`text-sm font-bold opacity-50 ${currentTheme.textMuted}`}>{translations.findingLocation}</p>
-      </div>
+    <div className={`flex flex-col items-center justify-center space-y-8 py-12 px-4 pb-40 transition-all duration-500 ${arMode ? 'fixed inset-0 z-[100] bg-black p-0 m-0' : ''}`}>
+      {arMode && (
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <video 
+            ref={videoRef} 
+            autoPlay 
+            playsInline 
+            muted 
+            className="w-full h-full object-cover opacity-80"
+          />
+          {isKaabaVisible && (
+            <motion.div 
+              className="absolute top-1/2 left-1/2 flex flex-col items-center justify-center gap-2"
+              animate={{ x: translateX - 40, y: '-50%' }}
+              transition={{ type: 'spring', stiffness: 100, damping: 20 }}
+            >
+              <div className="text-8xl filter drop-shadow-[0_0_20px_rgba(255,255,255,0.5)]">🕋</div>
+              <div className="bg-black/60 backdrop-blur-md px-4 py-2 rounded-full text-white font-bold text-sm tracking-widest uppercase border border-white/20">
+                {formatDigits(Math.round(distance || 0), activeNumberFormat)} km
+              </div>
+            </motion.div>
+          )}
 
-      <div className="relative w-72 h-72 md:w-80 md:h-80 flex items-center justify-center">
+          {/* AR UI Overlay */}
+          <div className="absolute inset-x-0 bottom-12 flex flex-col items-center">
+            <div className={`px-8 py-4 rounded-full flex items-center gap-3 font-black text-lg bg-black/50 backdrop-blur-xl text-white shadow-2xl border border-white/10 mb-8`}>
+              <Compass size={22} className={Math.abs(angleDiff) < 5 ? 'text-emerald-400' : 'text-white'} />
+              <span dir="ltr">{formatDigits(qiblaDegrees?.toFixed(1) || '0', activeNumberFormat)}°</span>
+            </div>
+            <button 
+              onClick={toggleArMode}
+              className="w-14 h-14 rounded-full bg-white/20 backdrop-blur-md border border-white/30 flex items-center justify-center text-white active:scale-90 transition-all pointer-events-auto shadow-2xl"
+            >
+              <X size={24} />
+            </button>
+          </div>
+        </div>
+      )}
+
+      {!arMode && (
+        <div className="text-center max-w-sm">
+          <h2 className={`text-3xl md:text-4xl font-black mb-2 ${currentTheme.textMain}`}>{translations.qibla}</h2>
+          <p className={`text-sm font-bold opacity-50 ${currentTheme.textMuted}`}>{translations.findingLocation}</p>
+        </div>
+      )}
+
+      {/* Compass View */}
+      <motion.div 
+        animate={{ scale: arMode ? 0.6 : 1, y: arMode ? -150 : 0, opacity: arMode ? 0.8 : 1 }}
+        className={`relative w-72 h-72 md:w-80 md:h-80 flex items-center justify-center ${arMode ? 'pointer-events-none mt-10' : ''}`}
+      >
         {/* حلقات البوصلة الخلفية */}
         <div className={`absolute inset-0 border-[10px] ${theme === 'dark' ? 'border-zinc-900 shadow-[inset_0_2px_10px_rgba(0,0,0,0.5)]' : 'border-gray-100 shadow-inner'} rounded-full`} />
         
@@ -147,7 +225,7 @@ const Qibla: React.FC<QiblaProps> = ({ translations, theme, numberFormat = 'lati
         {/* حالة التحميل أو الخطأ */}
         {loading ? (
           <div className="flex flex-col items-center gap-4">
-            <Loader2 className={`animate-spin ${currentTheme.accent}`} size={48} />
+            <AppLoader size="md" />
           </div>
         ) : error ? (
           <div className="text-center p-6 bg-red-50 dark:bg-red-950/20 rounded-3xl border border-red-100 dark:border-red-900/30">
@@ -180,10 +258,9 @@ const Qibla: React.FC<QiblaProps> = ({ translations, theme, numberFormat = 'lati
             </motion.div>
           </AnimatePresence>
         )}
-      </div>
+      </motion.div>
 
-      {/* تنبيه تفعيل البوصلة لمستخدمي iOS */}
-      {needsPermission && !isCompassActive && !loading && !error && (
+      {!arMode && needsPermission && !isCompassActive && !loading && !error && (
         <motion.button
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
@@ -196,7 +273,7 @@ const Qibla: React.FC<QiblaProps> = ({ translations, theme, numberFormat = 'lati
       )}
 
       <AnimatePresence>
-        {!loading && !error && distance !== null && (
+        {!arMode && !loading && !error && distance !== null && (
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -217,13 +294,23 @@ const Qibla: React.FC<QiblaProps> = ({ translations, theme, numberFormat = 'lati
               </div>
             </div>
 
-            <div className={`px-8 py-4 rounded-2xl flex items-center gap-3 font-black text-lg ${currentTheme.primary} text-white shadow-lg`}>
-              <Compass size={22} />
-              <span dir="ltr">{formatDigits(qiblaDegrees?.toFixed(1) || '0', activeNumberFormat)}° {translations.qibla}</span>
+            <div className="flex w-full gap-2">
+              <button 
+                onClick={toggleArMode}
+                className={`flex-1 py-4 rounded-2xl flex items-center justify-center gap-2 font-black text-sm shadow-lg active:scale-95 transition-all ${isCompassActive ? (theme === 'dark' ? 'bg-zinc-800 text-white' : 'bg-gray-100 text-gray-900') : 'opacity-50 pointer-events-none'}`}
+              >
+                <Camera size={18} />
+                الواقع المعزز (AR)
+              </button>
+              
+              <div className={`flex-[1.5] py-4 rounded-2xl flex items-center justify-center gap-2 font-black text-sm ${currentTheme.primary} text-white shadow-lg`}>
+                <Compass size={18} />
+                <span dir="ltr">{formatDigits(qiblaDegrees?.toFixed(1) || '0', activeNumberFormat)}°</span>
+              </div>
             </div>
             
-            <p className="text-[10px] font-bold opacity-30 text-center uppercase tracking-widest px-4">
-              ضع الجهاز بشكل أفقي للحصول على أدق نتيجة
+            <p className="text-[10px] font-bold opacity-30 text-center uppercase tracking-widest px-4 mt-2">
+              ضع الجهاز بشكل أفقي للحصول على أدق نتيجة، واستخدم ميزة AR لرؤية الاتجاه عبر الكاميرا
             </p>
           </motion.div>
         )}

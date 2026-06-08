@@ -29,7 +29,6 @@ export const MUEZZINS: Muezzin[] = [
 export const TRANSLATIONS: Record<string, Translation> = {
   ar: {
     title: 'أقِم',
-    community: 'المجتمع',
     addComment: 'إضافة منشور',
     nameOptional: 'الاسم (اختياري)',
     nameRequired: 'الاسم مطلوب',
@@ -83,7 +82,6 @@ export const TRANSLATIONS: Record<string, Translation> = {
   },
   en: {
     title: 'Aqim',
-    community: 'Community',
     addComment: 'Add Post',
     nameOptional: 'Name (Optional)',
     nameRequired: 'Name Required',
@@ -309,7 +307,7 @@ export const DUAS_DATA: Record<string, DuaCategory[]> = {
       id: 'travel',
       title: 'دعاء السفر',
       items: [
-        { id: 't1', text: "سُبْحانَ الَّذِي سَخَّرَ لَنَا هَذَا وَمَا كُنَّا لَهُ مُقْرِنِينَ وَإِنَّا إِلَى رَبِّنَا لَمُنْقَلِبُونَ", source: "سورة الزخرف" },
+        { id: 't1', text: "سُبْحَانَ الَّذِي سَخَّرَ لَنَا هَذَا وَمَا كُنَّا لَهُ مُقْرِنِينَ وَإِنَّا إِلَى رَبِّنَا لَمُنْقَلِبُونَ", source: "سورة الزخرف" },
         { id: 't2', text: "اللهم إنا نسألك في سفرنا هذا البر والتقوى، ومن العمل ما ترضى، اللهم هون علينا سفرنا هذا واطوِ عنا بعده", source: "صحيح مسلم" }
       ]
     }

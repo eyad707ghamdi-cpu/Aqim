@@ -47,7 +47,7 @@ const Duas: React.FC<DuasProps> = ({ translations, language, theme, numberFormat
   };
 
   return (
-    <div className="space-y-10 pb-32 max-w-4xl mx-auto px-2">
+    <div className="space-y-10 pb-40 max-w-4xl mx-auto px-2">
       {/* أزرار التصنيفات بنمطها الأصلي */}
       <div className="flex flex-wrap gap-3 justify-center">
         {categories.map(cat => (

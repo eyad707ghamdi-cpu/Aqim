@@ -1,10 +1,11 @@
-import { Image as ImageIcon, X, Loader2, Star, SendHorizontal, MessageCircle, ExternalLink, Sparkles } from 'lucide-react';
+import { Image as ImageIcon, X, Star, SendHorizontal, MessageCircle, ExternalLink, Sparkles } from 'lucide-react';
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { askAmin } from '../services/geminiService';
 import { Translation, Language, ThemeColor, SubscriptionTier, LoadingVariant } from '../types';
 import { THEMES } from '../constants';
 import { storage, ref, uploadString, getDownloadURL } from '../services/firebase';
+import AppLoader from './AppLoader';
 
 interface Message {
   role: 'user' | 'ai';
@@ -114,6 +115,7 @@ const AminChat: React.FC<AminChatProps> = ({ translations, language, theme, subs
         id: 'ai-' + Date.now() 
       }]);
     } catch (error) {
+      console.error(error);
       setMessages(prev => [...prev, { 
         role: 'ai', 
         content: isRtl ? 'عذراً، واجهت مشكلة في الاتصال بالمصادر السحابية.' : 'Sorry, I encountered a cloud connection error.', 
@@ -123,7 +125,7 @@ const AminChat: React.FC<AminChatProps> = ({ translations, language, theme, subs
   };
 
   return (
-    <div className={`flex flex-col h-[calc(100dvh-220px)] md:h-[680px] max-w-xl mx-auto w-full ${currentTheme.card} rounded-[3.5rem] shadow-2xl border ${isDark ? 'border-zinc-800' : 'border-emerald-50'} overflow-hidden relative`}>
+    <div className={`flex flex-col h-[calc(100dvh-320px)] md:h-[680px] max-w-xl mx-auto w-full ${currentTheme.card} rounded-[3.5rem] shadow-2xl border ${isDark ? 'border-zinc-800' : 'border-emerald-50'} overflow-hidden relative mb-48`}>
       <div className={`${isDark ? 'bg-zinc-900 border-b border-zinc-800' : `bg-gradient-to-r ${currentTheme.gradient}`} p-6 text-white flex items-center justify-between z-10`}>
         <div className="flex items-center gap-4">
           <div className="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center"><MessageCircle size={24} /></div>
@@ -153,7 +155,7 @@ const AminChat: React.FC<AminChatProps> = ({ translations, language, theme, subs
             </div>
           </motion.div>
         ))}
-        {loading && <div className="flex justify-start"><Loader2 className="animate-spin opacity-40" /></div>}
+        {loading && <div className="flex justify-start"><AppLoader size="sm" /></div>}
         <div ref={messagesEndRef} />
       </div>
 

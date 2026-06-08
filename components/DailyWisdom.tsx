@@ -84,10 +84,10 @@ const DailyWisdom: React.FC<DailyWisdomProps> = ({ translations, language, theme
         <AnimatePresence mode="wait">
           <motion.div
             key={index}
-            initial={{ opacity: 0, filter: 'blur(8px)', scale: 0.98 }}
-            animate={{ opacity: 1, filter: 'blur(0px)', scale: 1 }}
-            exit={{ opacity: 0, filter: 'blur(8px)', scale: 1.02 }}
-            transition={{ duration: 0.6 }}
+            initial={{ opacity: 0, x: 10 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -10 }}
+            transition={{ duration: 0.3, ease: "easeOut" }}
             className="flex flex-col items-center"
           >
             <p className={`text-2xl sm:text-3xl font-arabic font-bold leading-[1.8] px-4 ${isDark ? 'text-zinc-100' : 'text-emerald-950'}`}>

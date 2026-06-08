@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, LogIn, UserPlus, Mail, Lock, User, Loader2, ShieldCheck } from 'lucide-react';
+import { X, LogIn, UserPlus, Mail, Lock, User, ShieldCheck } from 'lucide-react';
 import { auth, db, doc, setDoc, signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile } from '../services/firebase';
 import { AuthUser, Language } from '../types';
+import AppLoader from './AppLoader';
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -146,7 +147,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess, theme
                 disabled={loading} 
                 className={`w-full py-4 rounded-2xl font-black shadow-lg flex items-center justify-center gap-2 transition-all active:scale-95 ${isDark ? 'bg-amber-400 text-zinc-950' : 'bg-emerald-600 text-white'}`}
               >
-                {loading ? <Loader2 className="animate-spin" size={20} /> : (isLogin ? (isRtl ? "دخول" : "Login") : (isRtl ? "تسجيل" : "Register"))}
+                {loading ? <AppLoader size="sm" /> : (isLogin ? (isRtl ? "دخول" : "Login") : (isRtl ? "تسجيل" : "Register"))}
               </button>
             </form>
 

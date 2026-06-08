@@ -40,55 +40,55 @@ const Layout: React.FC<LayoutProps> = ({ children, theme, accentColorKey, langua
     }
   }, [language]);
 
-  const headerGradient = isDark ? 'from-zinc-900 via-zinc-900 to-zinc-950' : `bg-gradient-to-r ${currentTheme.gradient}`;
+  const headerBg = isDark ? 'bg-zinc-950/80 border-b border-white/5' : 'bg-white/80 border-b border-black/5';
+  const textColor = isDark ? 'text-zinc-100' : 'text-zinc-900';
 
   return (
     <div 
-      className={`min-h-screen flex flex-col transition-colors duration-500 ${isDark ? 'bg-zinc-950' : 'bg-gray-50'} ${currentTheme.textMain} relative`}
+      className={`min-h-screen flex flex-col transition-colors duration-500 ${isDark ? 'bg-[#0a0a0a]' : 'bg-[#fcfcfc]'} relative`}
       dir={isRtl ? 'rtl' : 'ltr'}
     >
-      <header className={`${isDark ? 'bg-zinc-900/90 border-b border-zinc-800' : headerGradient} text-white py-6 px-4 md:px-8 shadow-2xl sticky top-0 z-50 backdrop-blur-xl transition-all duration-500`}>
-        <div className="max-w-6xl mx-auto grid grid-cols-3 items-center">
+      <header className={`${headerBg} ${textColor} py-4 px-4 md:px-8 sticky top-0 z-50 backdrop-blur-2xl transition-all duration-500`}>
+        <div className="max-w-5xl mx-auto flex justify-between items-center">
           
-          <div className="flex justify-start">
+          <div className="w-1/4 flex justify-start">
             <button 
               onClick={onToggleTheme} 
-              className={`p-3 md:p-4 rounded-2xl ${isDark ? 'bg-zinc-800 border-zinc-700' : 'bg-white/10 border-white/20'} backdrop-blur-md border active:scale-90 transition-all shadow-xl`}
+              className={`p-2.5 rounded-full ${isDark ? 'bg-zinc-900 text-zinc-400 hover:text-amber-400' : 'bg-zinc-100 text-zinc-600 hover:text-zinc-900'} active:scale-95 transition-all`}
               aria-label="Toggle Theme"
             >
-              {isDark ? <Sun size={20} className="text-amber-400 md:w-6 md:h-6" /> : <Moon size={20} className="md:w-6 md:h-6" />}
+              {isDark ? <Sun size={18} strokeWidth={2.5} /> : <Moon size={18} strokeWidth={2.5} />}
             </button>
           </div>
 
-          <div className="flex flex-col items-center text-center">
+          <div className="flex-1 flex flex-col items-center text-center">
             <motion.h1 
               initial={{ opacity: 0, y: -5 }} 
               animate={{ opacity: 1, y: 0 }} 
-              className="text-xl md:text-4xl font-black arabic-text tracking-tight drop-shadow-md"
+              className="text-lg md:text-2xl font-black arabic-text tracking-tight"
             >
               {title}
             </motion.h1>
             
             <motion.div 
               initial={{ opacity: 0 }} 
-              animate={{ opacity: 0.9 }} 
-              className="flex items-center gap-1.5 mt-1"
+              animate={{ opacity: 0.8 }} 
+              className="flex items-center gap-1.5 mt-0.5 text-zinc-500 dark:text-zinc-400"
             >
-              <Calendar size={12} className="opacity-70 md:w-4 md:h-4" />
-              <span className="text-[10px] md:text-sm font-bold tracking-tight opacity-90">{hijriDate}</span>
+              <span className="text-[10px] md:text-sm font-semibold tracking-tight">{hijriDate}</span>
             </motion.div>
           </div>
 
-          <div className="flex justify-end opacity-60">
-             <span className="text-[10px] md:text-xs font-black uppercase hidden sm:block tracking-widest">
-               {new Date().toLocaleDateString(language, { weekday: 'long' })}
+          <div className="w-1/4 flex justify-end text-zinc-400 dark:text-zinc-500">
+             <span className="text-[10px] md:text-xs font-bold uppercase hidden sm:block tracking-widest">
+               {new Date().toLocaleDateString(language, { weekday: 'short' })}
              </span>
           </div>
 
         </div>
       </header>
       
-      <main className="flex-1 max-w-6xl w-full mx-auto p-4 md:p-10 lg:p-12 pb-32 relative z-10">
+      <main className="flex-1 w-full mx-auto p-4 md:p-8 lg:p-10 pb-48 relative z-10">
         {children}
       </main>
     </div>

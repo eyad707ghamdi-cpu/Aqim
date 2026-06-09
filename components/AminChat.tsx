@@ -180,7 +180,10 @@ const AminChat: React.FC<AminChatProps> = ({ translations, language, theme, subs
           }} />
           <button type="button" onClick={handleImageClick} className={`p-4 rounded-2xl ${isDark ? 'bg-zinc-800 text-amber-400' : 'bg-emerald-50 text-emerald-600'}`}><ImageIcon size={24} /></button>
           <input type="text" value={input} onChange={(e) => setInput(e.target.value)} placeholder={placeholders[placeholderIndex]} className={`flex-1 p-4 rounded-2xl border-none outline-none ${isDark ? 'bg-zinc-950 text-white' : 'bg-gray-100'}`} />
-          <button type="submit" disabled={loading} className={`p-4 rounded-full ${currentTheme.primary} text-white`}><SendHorizontal size={24} /></button>
+          <button type="submit" disabled={loading || (!input.trim() && !selectedImage)} className={`p-4 rounded-2xl flex items-center justify-center gap-2 ${input.trim() || selectedImage ? currentTheme.primary + ' shadow-md hover:shadow-lg hover:-translate-y-0.5' : 'bg-gray-300 dark:bg-zinc-800 text-gray-500'} text-white transition-all duration-200 disabled:opacity-70 disabled:cursor-not-allowed`}>
+            <span className="hidden sm:inline font-medium">{isRtl ? 'إرسال' : 'Send'}</span>
+            <SendHorizontal size={24} className={isRtl ? "rotate-180" : ""} />
+          </button>
         </form>
       </div>
     </div>

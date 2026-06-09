@@ -1,3 +1,4 @@
+import "dotenv/config";
 import express from "express";
 import path from "path";
 import { createServer as createViteServer } from "vite";
@@ -18,7 +19,8 @@ async function startServer() {
         httpOptions: { headers: { 'User-Agent': 'aistudio-build' } }
       });
       
-      const parts: any[] = [{ text: prompt }];
+      const queryWithSiteFilter = `الرجاء البحث في موقع https://islamqa.info/ar أو https://islamqa.info للإجابة على السؤال التالي:\n${prompt}`;
+      const parts: any[] = [{ text: queryWithSiteFilter }];
 
       if (base64Image) {
         const data = base64Image.includes('base64,') ? base64Image.split('base64,')[1] : base64Image;
@@ -37,7 +39,8 @@ async function startServer() {
           systemInstruction: `أنت "أقِم AI"، مساعد ذكاء اصطناعي إسلامي.
           
           يجب أن تأخذ الأجوبة وتبحث عنها فقط وحصرياً من هذا الموقع: https://islamqa.info/ar
-          إذا لم تجد فتوى من موقع islamqa.info، اعتذر للمستخدم وقل أنك لم تجد فتوى مطابقة.
+          استخدم أداة البحث لتغطية الموقع islamqa.info.
+          إذا لم تجد الإجابة من موقع islamqa.info، اعتذر للمستخدم وقل أنك لم تجد فتوى مطابقة.
           
           تحدث باللغة: ${language}.`,
           tools: [{ googleSearch: {} }],

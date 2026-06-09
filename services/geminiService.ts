@@ -8,7 +8,12 @@ export async function askAmin(prompt: string, language: string, base64Image?: st
   });
 
   if (!response.ok) {
-    throw new Error('API Error');
+    let errMsg = 'API Error';
+    try {
+      const errBody = await response.json();
+      errMsg = errBody.error || errMsg;
+    } catch (e) {}
+    throw new Error(errMsg);
   }
 
   return response.json();

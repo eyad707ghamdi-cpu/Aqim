@@ -1,5 +1,3 @@
-import { GoogleGenAI } from "@google/genai";
-
 export async function askAmin(prompt: string, language: string, base64Image?: string) {
   const response = await fetch('/api/gemini/generate', {
     method: 'POST',

@@ -14,8 +14,13 @@ async function startServer() {
   app.post("/api/gemini/generate", async (req, res) => {
     try {
       const { prompt, language, base64Image } = req.body;
+      const apiKey = process.env.GEMINI_API_KEY;
+      if (!apiKey) {
+        return res.status(500).json({ error: "مفتاح Gemini API غير متوفر في إعدادات الخادم" });
+      }
+
       const ai = new GoogleGenAI({
-        apiKey: process.env.GEMINI_API_KEY,
+        apiKey,
         httpOptions: { headers: { 'User-Agent': 'aistudio-build' } }
       });
       

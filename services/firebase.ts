@@ -5,13 +5,13 @@ import { getStorage, ref, uploadString, getDownloadURL } from "firebase/storage"
 import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyBD4BM2SX2RRDpo_g2U7tpaaoQfNBHMPt4",
-  authDomain: "dini-plus.firebaseapp.com",
-  projectId: "dini-plus",
-  storageBucket: "dini-plus.firebasestorage.app",
-  messagingSenderId: "793903822853",
-  appId: "1:793903822853:web:a38537f7cdf78daad2c46c",
-  measurementId: "G-V1PN6XV8P4"
+  apiKey: import.meta.env?.VITE_FIREBASE_API_KEY || "AIzaSyBD4BM2SX2RRDpo_g2U7tpaaoQfNBHMPt4",
+  authDomain: import.meta.env?.VITE_FIREBASE_AUTH_DOMAIN || "dini-plus.firebaseapp.com",
+  projectId: import.meta.env?.VITE_FIREBASE_PROJECT_ID || "dini-plus",
+  storageBucket: import.meta.env?.VITE_FIREBASE_STORAGE_BUCKET || "dini-plus.firebasestorage.app",
+  messagingSenderId: import.meta.env?.VITE_FIREBASE_MESSAGING_SENDER_ID || "793903822853",
+  appId: import.meta.env?.VITE_FIREBASE_APP_ID || "1:793903822853:web:a38537f7cdf78daad2c46c",
+  measurementId: import.meta.env?.VITE_FIREBASE_MEASUREMENT_ID || "G-V1PN6XV8P4"
 };
 
 const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();

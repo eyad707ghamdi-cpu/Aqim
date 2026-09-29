@@ -373,29 +373,18 @@ const Settings: React.FC<SettingsProps> = ({ translations, settings, updateSetti
           {/* Language Selection */}
           <div className="space-y-3">
             <p className="text-xs font-black opacity-40 uppercase tracking-widest px-2">{isRtl ? "لغة التطبيق" : "App Language"}</p>
-            <div className="grid grid-cols-2 gap-3">
-              {[
-                { id: 'ar', name: 'العربية', flag: '🇸🇦' },
-                { id: 'en', name: 'English', flag: '🇺🇸' }
-              ].map((lang) => (
-                <button
-                  key={lang.id}
-                  onClick={() => updateSettings({ language: lang.id as Language })}
-                  className={`p-4 rounded-2xl border-2 flex items-center justify-center gap-3 transition-all font-black ${
-                    settings.language === lang.id 
-                    ? (isDark ? 'bg-amber-400 border-amber-400 text-zinc-950' : 'bg-emerald-600 border-emerald-600 text-white shadow-lg shadow-emerald-500/20')
-                    : (isDark ? 'bg-zinc-800/50 border-zinc-800 text-zinc-400 hover:border-zinc-700' : 'bg-white border-gray-100 text-zinc-600 hover:border-gray-200 shadow-sm')
-                  }`}
-                >
-                  <span className="text-lg">{lang.flag}</span>
-                  <span>{lang.name}</span>
-                  {settings.language === lang.id && <CheckCircle2 size={16} />}
-                </button>
-              ))}
+            <div className={`p-4 rounded-2xl border-2 flex items-center justify-between font-black ${
+              isDark ? 'bg-amber-400/10 border-amber-400/20 text-amber-400' : 'bg-emerald-50 border-emerald-100 text-emerald-700 shadow-sm'
+            }`}>
+              <div className="flex items-center gap-3">
+                <span className="text-xl">🇸🇦</span>
+                <span className="text-base">العربية</span>
+              </div>
+              <div className="flex items-center gap-1.5 text-xs font-bold opacity-80">
+                <span>اللغة المعتمدة</span>
+                <CheckCircle2 size={16} />
+              </div>
             </div>
-            <p className="text-[10px] font-bold opacity-30 text-center uppercase tracking-tighter mt-2">
-              {isRtl ? "سيتم دعم لغات إضافية قريباً" : "More languages coming soon"}
-            </p>
           </div>
         </div>
       </section>

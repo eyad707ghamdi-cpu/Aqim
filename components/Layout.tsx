@@ -30,13 +30,10 @@ const Layout: React.FC<LayoutProps> = ({ children, theme, accentColorKey, langua
     };
     
     try {
-      const hijriFormatter = new Intl.DateTimeFormat(
-        language === 'ar' ? 'ar-SA-u-ca-islamic-uma' : 'en-US-u-ca-islamic-uma', 
-        hijriOptions as any
-      );
+      const hijriFormatter = new Intl.DateTimeFormat('ar-SA-u-ca-islamic-uma', hijriOptions as any);
       setHijriDate(hijriFormatter.format(date));
     } catch (e) {
-      setHijriDate(language === 'ar' ? "١٢ شعبان ١٤٤٧" : "12 Sha'ban 1447");
+      setHijriDate("١٢ شعبان ١٤٤٧");
     }
   }, [language]);
 

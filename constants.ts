@@ -46,6 +46,8 @@ export const TRANSLATIONS: Record<string, Translation> = {
     fontFamilyLabel: 'نوع الخط',
     duas: 'الأدعية',
     athkar: 'الأذكار',
+    hisn: 'حصن المسلم',
+    quran: 'القرآن الكريم',
     qibla: 'القبلة',
     aminName: 'أقِم AI',
     settings: 'الإعدادات',
@@ -79,59 +81,6 @@ export const TRANSLATIONS: Record<string, Translation> = {
     yourName: 'اسمك',
     suggestionPlaceholder: 'اكتب اقتراحك هنا لنجعل التطبيق أفضل...',
     sendSuggestion: 'إرسال الاقتراح'
-  },
-  en: {
-    title: 'Aqim',
-    addComment: 'Add Post',
-    nameOptional: 'Name (Optional)',
-    nameRequired: 'Name Required',
-    ageOptional: 'Age (Optional)',
-    messageRequired: 'Message Required',
-    send: 'Send',
-    like: 'Like',
-    report: 'Report',
-    delete: 'Delete',
-    reply: 'Reply',
-    devMode: 'Dev Mode',
-    enterPin: 'Enter PIN',
-    wrongPin: 'Wrong PIN',
-    inappropriateContent: 'Inappropriate Content',
-    fontFamilyLabel: 'Font Family',
-    duas: 'Duas',
-    athkar: 'Athkar',
-    qibla: 'Qibla',
-    aminName: 'Aqim AI',
-    settings: 'Settings',
-    fajr: 'Fajr',
-    dhuhr: 'Dhuhr',
-    asr: 'Asr',
-    maghrib: 'Maghrib',
-    isha: 'Isha',
-    goodMorning: 'Good Morning',
-    goodEvening: 'Good Evening',
-    detectingLocation: 'Detecting location...',
-    nextPrayer: 'Next Prayer',
-    count: 'Count',
-    reset: 'Reset',
-    stopAdhan: 'Stop Adhan',
-    adhanStarted: 'Adhan started',
-    locationError: 'Please enable location for accurate times',
-    completed: 'Completed',
-    ayahs: 'Verses',
-    searchSurah: 'Search Surah...',
-    chooseReciter: 'Choose Reciter',
-    failedAudio: 'Audio playback failed',
-    suggestIdeas: 'Suggest an idea',
-    joinUs: 'Join Channel',
-    telegramChannel: 'Official Telegram Channel',
-    plusMember: 'Aqim Plus Member',
-    badgeCheck: 'Verified Badge',
-    removeAds: 'No Ads',
-    aiFeatures: 'AI Features',
-    unlimitedAI: 'Unlimited AI Chat',
-    yourName: 'Your Name',
-    suggestionPlaceholder: 'Write your suggestion here...',
-    sendSuggestion: 'Send Suggestion'
   }
 };
 
@@ -153,24 +102,19 @@ export const FONT_OPTIONS: { id: FontFamily; name: string; family: string }[] = 
 export const WISDOMS: string[] = ["الصلاة خير من النوم", "أرحنا بها يا بلال", "الصلاة عماد الدين"];
 
 export const QURRA: Reciter[] = [
-  { id: 1, name: 'عبد الباسط عبد الصمد', subName: 'Abdelbasset Abdessamad', slug: '001' },
-  { id: 3, name: 'عبد الرحمن السديس', subName: 'Abderrahman Al-Soudais', slug: '003' },
-  { id: 6, name: 'محمود خليل الحصري', subName: 'Mahmoud Khalil Al-Hussary', slug: '006' },
-  { id: 7, name: 'مشاري راشد العفاسي', subName: 'Mishary Rashid Alafasy', slug: '007' },
-  { id: 10, name: 'سعود الشريم', subName: 'Saud Al-Shuraim', slug: '010' },
-  { id: 12, name: 'محمد صديق المنشاوي', subName: 'Mohamed Siddiq Al-Minshawi', slug: '012' }
+  { id: 7, name: 'مشاري راشد العفاسي', style: 'مرتل' },
+  { id: 2, name: 'عبد الباسط عبد الصمد', style: 'مرتل' },
+  { id: 1, name: 'عبد الباسط عبد الصمد', style: 'مجود' },
+  { id: 9, name: 'محمد صديق المنشاوي', style: 'مرتل' },
+  { id: 8, name: 'محمد صديق المنشاوي', style: 'مجود' },
+  { id: 6, name: 'محمود خليل الحصري', style: 'مرتل' },
+  { id: 3, name: 'عبد الرحمن السديس', style: 'مرتل' },
+  { id: 4, name: 'أبو بكر الشاطري', style: 'مرتل' },
+  { id: 5, name: 'هاني الرفاعي', style: 'مرتل' }
 ];
 
 export const QURAN_TRANSLATIONS: Record<Language, { id: number; name: string }> = {
-  ar: { id: 0, name: 'العربية' },
-  en: { id: 131, name: 'English' },
-  id: { id: 33, name: 'Indonesian' },
-  ur: { id: 158, name: 'Urdu' },
-  fr: { id: 31, name: 'French' },
-  fa: { id: 21, name: 'Persian' },
-  ru: { id: 78, name: 'Russian' },
-  tr: { id: 156, name: 'Turkish' },
-  es: { id: 232, name: 'Spanish' }
+  ar: { id: 0, name: 'العربية' }
 };
 
 export interface Inspiration {
@@ -181,16 +125,11 @@ export interface Inspiration {
 
 export const DAILY_INSPIRATIONS: Record<string, Inspiration[]> = {
   ar: [
-    { text: "أَحَبُّ الأَعْمَالِ إِلَى اللَّهِ أَدْوَمُهَا وَإِنْ قَلَّ", source: "صحيح البخاري", type: "hadith" },
+    { text: "أَحَبُّ الأَعْمَالِ إِلَى اللَّهِ أَدْوَمُهَا وَإينْ قَلَّ", source: "صحيح البخاري", type: "hadith" },
     { text: "إِنَّ الصَّلَاةَ كَانَتْ عَلَى الْمُؤْمِنِينَ كِتَابًا مَّوقُوتًا", source: "سورة النساء", type: "quote" },
     { text: "تَبَسُّمُكَ فِي وَجْهِ أَخِيكَ لَكَ صَدَقَةٌ", source: "سنن الترمذي", type: "hadith" },
     { text: "اللهمَّ أعنِّي على ذكرِك وشكرِك وحسنِ عبادتِك", source: "دعاء نبوي", type: "sunnah" },
     { text: "مَنْ صَلَّى الْبَرْدَيْنِ دَخَلَ الْجَنَّةَ", source: "صحيح البخاري", type: "hadith" }
-  ],
-  en: [
-    { text: "The most beloved of deeds to Allah are those that are most consistent, even if they are small.", source: "Sahih Bukhari", type: "hadith" },
-    { text: "Prayer has been enjoined on the believers at fixed times.", source: "Surah An-Nisa", type: "quote" },
-    { text: "Smiling in the face of your brother is charity.", source: "Tirmidhi", type: "hadith" }
   ]
 };
 
@@ -248,25 +187,6 @@ export const ATHKAR_DATA: Record<string, AthkarCategory[]> = {
         { text: "قراءة سورة الإخلاص والمعوذتين والنفث في الكفين", repeat: 3 }
       ]
     }
-  ],
-  en: [
-    {
-      id: 'morning',
-      title: 'Morning Athkar',
-      items: [
-        { text: "We have reached the morning and at this very time unto Allah belongs all sovereignty, and all praise is for Allah. None has the right to be worshipped except Allah, alone, without partner...", repeat: 1 },
-        { text: "O Allah, by Your leave we have reached the morning and by Your leave we have reached the evening, by Your leave we live and die and unto You is our resurrection.", repeat: 1 },
-        { text: "Subhanallah wa bihamdihi (Glory be to Allah and all praise is due to Him)", repeat: 100 }
-      ]
-    },
-    {
-      id: 'evening',
-      title: 'Evening Athkar',
-      items: [
-        { text: "We have reached the evening and at this very time unto Allah belongs all sovereignty...", repeat: 1 },
-        { text: "I seek refuge in Allah's perfect words from the evil of what He has created.", repeat: 3 }
-      ]
-    }
   ]
 };
 
@@ -309,16 +229,6 @@ export const DUAS_DATA: Record<string, DuaCategory[]> = {
       items: [
         { id: 't1', text: "سُبْحَانَ الَّذِي سَخَّرَ لَنَا هَذَا وَمَا كُنَّا لَهُ مُقْرِنِينَ وَإِنَّا إِلَى رَبِّنَا لَمُنْقَلِبُونَ", source: "سورة الزخرف" },
         { id: 't2', text: "اللهم إنا نسألك في سفرنا هذا البر والتقوى، ومن العمل ما ترضى، اللهم هون علينا سفرنا هذا واطوِ عنا بعده", source: "صحيح مسلم" }
-      ]
-    }
-  ],
-  en: [
-    {
-      id: 'prophetic',
-      title: 'Prophetic Duas',
-      items: [
-        { id: 'p1_en', text: "O Allah, I ask You for guidance, piety, chastity and self-sufficiency.", source: "Sahih Muslim" },
-        { id: 'p2_en', text: "O Allah, help me to remember You, to thank You, and to worship You in the best of manners.", source: "Abu Dawood" }
       ]
     }
   ]

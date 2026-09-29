@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { Home, Settings as SettingsIcon, BookOpen, Navigation, MessageSquare, Trophy, Coins, Heart, LogIn, LayoutGrid, X } from 'lucide-react';
+import { Home, Settings as SettingsIcon, BookOpen, Navigation, MessageSquare, Trophy, Coins, Heart, LogIn, LayoutGrid, X, Shield, BookmarkCheck, Sparkles } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Layout from './components/Layout';
 import PrayerTimes from './components/PrayerTimes';
@@ -13,14 +13,16 @@ import Qibla from './components/Qibla';
 import Onboarding from './components/Onboarding';
 import DailyWisdom from './components/DailyWisdom';
 import IslamicQuiz from './components/IslamicQuiz';
+import HisnMuslim from './components/HisnMuslim';
+import Quran from './components/Quran';
 import AppLoader from './components/AppLoader';
 import { TRANSLATIONS, THEMES, FONT_OPTIONS, formatDigits } from './constants';
 import { UserSettings, Language, ThemeColor } from './types';
 import { db, doc, getDoc, updateDoc, increment } from './services/firebase';
 
-type Tab = 'home' | 'quiz' | 'dhikr' | 'duas' | 'qibla' | 'amin' | 'settings';
+type Tab = 'home' | 'quran' | 'quiz' | 'dhikr' | 'hisn' | 'duas' | 'qibla' | 'amin' | 'settings';
 
-const TABS: Tab[] = ['home', 'quiz', 'dhikr', 'duas', 'qibla', 'amin', 'settings'];
+const TABS: Tab[] = ['home', 'quran', 'quiz', 'dhikr', 'hisn', 'duas', 'qibla', 'amin', 'settings'];
 
 const App: React.FC = () => {
   const [activeTab, setActiveTab] = useState<Tab>('home');
@@ -28,6 +30,7 @@ const App: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isInitializing, setIsInitializing] = useState(true);
   const [isMobile, setIsMobile] = useState(typeof window !== 'undefined' ? window.innerWidth < 768 : false);
+  const [isQuranFocusMode, setIsQuranFocusMode] = useState(false);
 
   useEffect(() => {
     // Artificial delay for splash or real initialization
@@ -39,6 +42,9 @@ const App: React.FC = () => {
     setPrevTab(activeTab);
     setActiveTab(tab);
     setIsMenuOpen(false);
+    if (tab !== 'quran') {
+      setIsQuranFocusMode(false);
+    }
   };
 
   const activeIdx = TABS.indexOf(activeTab);
@@ -75,8 +81,8 @@ const App: React.FC = () => {
       if (saved) {
         const parsed = JSON.parse(saved);
         // Ensure points are at least 10000 as requested
-        // Force font to system as requested
-        return { ...defaults, ...parsed, points: Math.max(parsed.points || 0, 10000), fontFamily: 'system' };
+        // Force font to system and language to Arabic
+        return { ...defaults, ...parsed, language: 'ar' as Language, points: Math.max(parsed.points || 0, 10000), fontFamily: 'system' };
       }
     } catch (e) {}
     return defaults;
@@ -87,7 +93,7 @@ const App: React.FC = () => {
   }, [settings]);
 
   const updateSettings = (updates: Partial<UserSettings>) => {
-    setSettings(prev => ({ ...prev, ...updates }));
+    setSettings(prev => ({ ...prev, ...updates, language: 'ar' }));
   };
 
   const handleAddPoints = (amount: number) => {
@@ -95,12 +101,12 @@ const App: React.FC = () => {
     updateSettings({ points: newPoints });
   };
 
-  const t = TRANSLATIONS[settings.language] || TRANSLATIONS.ar;
+  const t = TRANSLATIONS.ar;
   const isDark = settings.isDarkMode;
   const effectiveThemeKey = isDark ? 'dark' : settings.accentColor;
   const currentTheme = THEMES[effectiveThemeKey];
   const accentInfo = THEMES[settings.accentColor]; 
-  const isRtlNav = settings.language === 'ar' || settings.language === 'ur';
+  const isRtlNav = true;
 
   const selectedFont = settings.fontFamily === 'system' ? "ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji'" : FONT_OPTIONS.find(f => f.id === settings.fontFamily)?.family || "'Noto Sans Arabic', sans-serif";
 
@@ -146,19 +152,21 @@ const App: React.FC = () => {
         title="أقِم" 
         onToggleTheme={() => updateSettings({ isDarkMode: !isDark })}
       >
-        <div className="fixed top-24 right-4 z-[60] md:top-28 md:right-8 flex flex-col items-end gap-3 pointer-events-none">
-          <motion.div 
-            initial={{ scale: 0.8, opacity: 0, y: 10 }}
-            animate={{ scale: 1, opacity: 1, y: 0 }}
-            transition={{ type: "spring", bounce: 0.4 }}
-            className={`flex items-center gap-2 px-3 py-1.5 md:px-4 md:py-2 rounded-full border backdrop-blur-xl shadow-lg pointer-events-auto ${isDark ? 'bg-zinc-900/60 border-amber-500/30 text-amber-400' : 'bg-white/60 border-emerald-500/20 text-emerald-600'}`}
-          >
-            <motion.div animate={{ y: [0, -3, 0] }} transition={{ repeat: Infinity, duration: 2.5, ease: "easeInOut" }}>
-              <Coins size={18} strokeWidth={2.5} />
+        {!isQuranFocusMode && (
+          <div className="fixed top-24 right-4 z-[60] md:top-28 md:right-8 flex flex-col items-end gap-3 pointer-events-none">
+            <motion.div 
+              initial={{ scale: 0.8, opacity: 0, y: 10 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              transition={{ type: "spring", bounce: 0.4 }}
+              className={`flex items-center gap-2 px-3 py-1.5 md:px-4 md:py-2 rounded-full border backdrop-blur-xl shadow-lg pointer-events-auto ${isDark ? 'bg-zinc-900/60 border-amber-500/30 text-amber-400' : 'bg-white/60 border-emerald-500/20 text-emerald-600'}`}
+            >
+              <motion.div animate={{ y: [0, -3, 0] }} transition={{ repeat: Infinity, duration: 2.5, ease: "easeInOut" }}>
+                <Coins size={18} strokeWidth={2.5} />
+              </motion.div>
+              <span className="font-extrabold text-sm tracking-tight">{formatDigits(settings.points || 0, settings.numberFormat)}</span>
             </motion.div>
-            <span className="font-extrabold text-sm tracking-tight">{formatDigits(settings.points || 0, settings.numberFormat)}</span>
-          </motion.div>
-        </div>
+          </div>
+        )}
 
         <div className="mt-2 min-h-[70vh] relative z-10 w-full md:pb-0">
           <AnimatePresence mode="popLayout" initial={false}>
@@ -172,8 +180,100 @@ const App: React.FC = () => {
               {activeTab === 'home' && (
                 <div className="space-y-10">
                   <DailyWisdom translations={t} language={settings.language} theme={effectiveThemeKey} />
+                  
+                  {/* مدخل سريع لقسم القرآن الكريم من Quran.com */}
+                  <motion.div 
+                    whileHover={{ scale: 1.01 }}
+                    whileTap={{ scale: 0.99 }}
+                    onClick={() => handleTabChange('quran')}
+                    className={`p-6 md:p-8 rounded-[2.8rem] border cursor-pointer relative overflow-hidden shadow-sm transition-all ${
+                      isDark 
+                        ? 'bg-gradient-to-r from-zinc-900 via-zinc-900 to-emerald-950/30 border-zinc-800 hover:border-emerald-500/40' 
+                        : 'bg-gradient-to-r from-emerald-700 via-teal-800 to-emerald-900 text-white border-transparent shadow-emerald-900/20 shadow-lg'
+                    }`}
+                  >
+                    <div className="relative z-10 flex items-center justify-between gap-4">
+                      <div className="flex items-center gap-4 md:gap-6">
+                        <div className={`w-14 h-14 md:w-16 md:h-16 rounded-3xl flex items-center justify-center shrink-0 ${
+                          isDark ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : 'bg-white/20 text-white backdrop-blur-md'
+                        }`}>
+                          <BookOpen size={28} />
+                        </div>
+                        <div className="space-y-1">
+                          <div className="flex items-center gap-2">
+                            <span className={`text-[10px] font-black uppercase tracking-widest px-2.5 py-0.5 rounded-full ${
+                              isDark ? 'bg-emerald-500/20 text-emerald-400' : 'bg-white/20 text-white'
+                            }`}>
+                              Quran.com
+                            </span>
+                            <h3 className="text-xl md:text-2xl font-black text-white">
+                              القرآن الكريم كاملاً
+                            </h3>
+                          </div>
+                          <p className={`text-xs md:text-sm font-medium ${isDark ? 'text-zinc-400' : 'text-emerald-100'}`}>
+                            بالرسم العثماني الأصلي والخط المعتمد من Quran.com مع التلاوة والتفسير
+                          </p>
+                        </div>
+                      </div>
+                      <div className={`px-4 py-2.5 rounded-2xl text-xs font-black shrink-0 ${
+                        isDark ? 'bg-emerald-500 text-zinc-950 shadow-md' : 'bg-white text-emerald-900 shadow-md'
+                      }`}>
+                        قراءة واستماع ←
+                      </div>
+                    </div>
+                  </motion.div>
+
+                  {/* مدخل سريع لقسم حصن المسلم */}
+                  <motion.div 
+                    whileHover={{ scale: 1.01 }}
+                    whileTap={{ scale: 0.99 }}
+                    onClick={() => handleTabChange('hisn')}
+                    className={`p-6 md:p-8 rounded-[2.8rem] border cursor-pointer relative overflow-hidden shadow-sm transition-all ${
+                      isDark 
+                        ? 'bg-gradient-to-r from-zinc-900 via-zinc-900 to-amber-950/20 border-zinc-800 hover:border-amber-500/40' 
+                        : 'bg-gradient-to-r from-emerald-600 to-teal-700 text-white border-transparent shadow-emerald-700/20 shadow-lg'
+                    }`}
+                  >
+                    <div className="relative z-10 flex items-center justify-between gap-4">
+                      <div className="flex items-center gap-4 md:gap-6">
+                        <div className={`w-14 h-14 md:w-16 md:h-16 rounded-3xl flex items-center justify-center shrink-0 ${
+                          isDark ? 'bg-amber-400 text-zinc-950' : 'bg-white/20 text-white backdrop-blur-md'
+                        }`}>
+                          <Shield size={28} />
+                        </div>
+                        <div className="space-y-1">
+                          <div className="flex items-center gap-2">
+                            <span className={`text-[10px] font-black uppercase tracking-widest px-2.5 py-0.5 rounded-full ${
+                              isDark ? 'bg-amber-400/20 text-amber-400' : 'bg-white/20 text-white'
+                            }`}>
+                              جديد
+                            </span>
+                            <h3 className={`text-xl md:text-2xl font-black ${isDark ? 'text-white' : 'text-white'}`}>
+                              حصن المسلم كاملاً
+                            </h3>
+                          </div>
+                          <p className={`text-xs md:text-sm font-medium ${isDark ? 'text-zinc-400' : 'text-emerald-100'}`}>
+                            أذكار مختارة مصنفة حسب الوقت والحالة، مع إمكانية حفظ المفضلة
+                          </p>
+                        </div>
+                      </div>
+                      <div className={`px-4 py-2.5 rounded-2xl text-xs font-black shrink-0 ${
+                        isDark ? 'bg-amber-400 text-zinc-950' : 'bg-white text-emerald-800 shadow-md'
+                      }`}>
+                        تصفح الأذكار ←
+                      </div>
+                    </div>
+                  </motion.div>
+
                   <PrayerTimes translations={t} theme={effectiveThemeKey} language={settings.language} notificationsEnabled={settings.notificationsEnabled} selectedMuezzin={settings.selectedMuezzin} timeFormat={settings.timeFormat} numberFormat={settings.numberFormat} accentColor={accentInfo.accent} userName={settings.userName} />
                 </div>
+              )}
+              {activeTab === 'quran' && (
+                <Quran 
+                  theme={effectiveThemeKey} 
+                  numberFormat={settings.numberFormat} 
+                  onFocusModeChange={setIsQuranFocusMode}
+                />
               )}
               {activeTab === 'quiz' && (
                 <IslamicQuiz 
@@ -183,7 +283,32 @@ const App: React.FC = () => {
                   onPointsEarned={handleAddPoints}
                 />
               )}
-              {activeTab === 'dhikr' && <div className="space-y-8"><Tasbih translations={t} theme={effectiveThemeKey} numberFormat={settings.numberFormat} /><Athkar translations={t} theme={effectiveThemeKey} language={settings.language} numberFormat={settings.numberFormat} /></div>}
+              {activeTab === 'dhikr' && (
+                <div className="space-y-8">
+                  <div 
+                    onClick={() => handleTabChange('hisn')}
+                    className={`p-6 rounded-[2.5rem] border cursor-pointer transition-all active:scale-[0.99] flex items-center justify-between group shadow-sm hover:shadow-md ${
+                      isDark ? 'bg-gradient-to-l from-amber-950/30 to-zinc-900 border-amber-500/20' : 'bg-gradient-to-l from-emerald-500/10 to-white border-emerald-100'
+                    }`}
+                  >
+                    <div className="flex items-center gap-4">
+                      <div className={`p-3.5 rounded-2xl ${isDark ? 'bg-amber-400 text-zinc-950' : 'bg-emerald-600 text-white'} shadow-md group-hover:scale-105 transition-transform`}>
+                        <Shield size={24} />
+                      </div>
+                      <div>
+                        <h4 className={`text-xl font-black ${currentTheme.textMain}`}>حصن المسلم كاملاً</h4>
+                        <p className="text-xs opacity-60 font-medium">أذكار مختارة حسب الوقت والحالة مع ميزة حفظ المفضلة</p>
+                      </div>
+                    </div>
+                    <span className={`px-4 py-2 rounded-xl text-xs font-black shrink-0 ${isDark ? 'bg-zinc-800 text-amber-400' : 'bg-emerald-50 text-emerald-700'}`}>
+                      فتح الحصن ←
+                    </span>
+                  </div>
+                  <Tasbih translations={t} theme={effectiveThemeKey} numberFormat={settings.numberFormat} />
+                  <Athkar translations={t} theme={effectiveThemeKey} language={settings.language} numberFormat={settings.numberFormat} />
+                </div>
+              )}
+              {activeTab === 'hisn' && <HisnMuslim theme={effectiveThemeKey} numberFormat={settings.numberFormat} />}
               {activeTab === 'duas' && <Duas translations={t} theme={effectiveThemeKey} language={settings.language} numberFormat={settings.numberFormat} />}
               {activeTab === 'qibla' && <Qibla translations={t} theme={effectiveThemeKey} numberFormat={settings.numberFormat} />}
               {activeTab === 'amin' && <AminChat translations={t} language={settings.language} theme={effectiveThemeKey} subscriptionTier={settings.subscriptionTier} onSubscribe={() => setActiveTab('settings')} userName={settings.userName} />}
@@ -226,6 +351,8 @@ const App: React.FC = () => {
                     </button>
                   </div>
                   <div className="grid grid-cols-2 gap-2 md:gap-3">
+                    <MenuButton icon={<BookOpen/>} label={t.quran || "القرآن الكريم"} onClick={() => handleTabChange('quran')} isActive={activeTab === 'quran'} theme={currentTheme} accentColor={accentInfo.accent} isDarkMode={isDark} />
+                    <MenuButton icon={<Shield/>} label={t.hisn || "حصن المسلم"} onClick={() => handleTabChange('hisn')} isActive={activeTab === 'hisn'} theme={currentTheme} accentColor={accentInfo.accent} isDarkMode={isDark} />
                     <MenuButton icon={<Trophy/>} label={isRtlNav ? "تحدي" : "Quiz"} onClick={() => handleTabChange('quiz')} isActive={activeTab === 'quiz'} theme={currentTheme} accentColor={accentInfo.accent} isDarkMode={isDark} />
                     <MenuButton icon={<Heart/>} label={t.duas} onClick={() => handleTabChange('duas')} isActive={activeTab === 'duas'} theme={currentTheme} accentColor={accentInfo.accent} isDarkMode={isDark} />
                     <MenuButton icon={<Navigation/>} label={t.qibla} onClick={() => handleTabChange('qibla')} isActive={activeTab === 'qibla'} theme={currentTheme} accentColor={accentInfo.accent} isDarkMode={isDark} />
@@ -237,29 +364,34 @@ const App: React.FC = () => {
           )}
         </AnimatePresence>
 
-        <nav className={`fixed bottom-4 left-4 right-4 md:left-1/2 md:-translate-x-1/2 md:w-max max-w-[420px] md:max-w-5xl mx-auto rounded-[2rem] border z-50 backdrop-blur-[40px] saturate-[1.5] transition-all duration-500 overflow-hidden ${isDark ? 'bg-zinc-900/50 border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.5)]' : 'bg-white/50 border-white/70 shadow-[0_8px_32px_rgba(31,38,135,0.07)]'}`}>
-          <div className="absolute inset-0 bg-gradient-to-tr from-white/20 via-transparent to-white/10 pointer-events-none rounded-[2rem]"></div>
-          <div className="flex justify-between md:justify-center items-center h-[4.5rem] px-3 md:px-6 w-full relative z-10">
-            {isMobile ? (
-              <>
-                <NavItem isActive={activeTab === 'home' && !isMenuOpen} onClick={() => handleTabChange('home')} icon={<Home size={22} />} label={isRtlNav ? "الرئيسية" : "Home"} theme={currentTheme} accentColor={accentInfo.accent} isDarkMode={isDark} />
-                <NavItem isActive={activeTab === 'amin' && !isMenuOpen} onClick={() => handleTabChange('amin')} icon={<MessageSquare size={22} />} label={t.aminName} theme={currentTheme} accentColor={accentInfo.accent} isDarkMode={isDark} />
-                <NavItem isActive={activeTab === 'dhikr' && !isMenuOpen} onClick={() => handleTabChange('dhikr')} icon={<BookOpen size={22} />} label={t.athkar} theme={currentTheme} accentColor={accentInfo.accent} isDarkMode={isDark} />
-                <NavItem isActive={isMenuOpen || ['quiz', 'duas', 'qibla', 'settings'].includes(activeTab)} onClick={() => setIsMenuOpen(!isMenuOpen)} icon={<LayoutGrid size={22} />} label={isRtlNav ? "المزيد" : "More"} theme={currentTheme} accentColor={accentInfo.accent} isDarkMode={isDark} />
-              </>
-            ) : (
-              <>
-                <NavItem isActive={activeTab === 'home'} onClick={() => handleTabChange('home')} icon={<Home size={22} />} label={isRtlNav ? "الرئيسية" : "Home"} theme={currentTheme} accentColor={accentInfo.accent} isDarkMode={isDark} />
-                <NavItem isActive={activeTab === 'quiz'} onClick={() => handleTabChange('quiz')} icon={<Trophy size={22} />} label={isRtlNav ? "تحدي" : "Quiz"} theme={currentTheme} accentColor={accentInfo.accent} isDarkMode={isDark} />
-                <NavItem isActive={activeTab === 'dhikr'} onClick={() => handleTabChange('dhikr')} icon={<BookOpen size={22} />} label={t.athkar} theme={currentTheme} accentColor={accentInfo.accent} isDarkMode={isDark} />
-                <NavItem isActive={activeTab === 'duas'} onClick={() => handleTabChange('duas')} icon={<Heart size={22} />} label={t.duas} theme={currentTheme} accentColor={accentInfo.accent} isDarkMode={isDark} />
-                <NavItem isActive={activeTab === 'qibla'} onClick={() => handleTabChange('qibla')} icon={<Navigation size={22} />} label={t.qibla} theme={currentTheme} accentColor={accentInfo.accent} isDarkMode={isDark} />
-                <NavItem isActive={activeTab === 'amin'} onClick={() => handleTabChange('amin')} icon={<MessageSquare size={22} />} label={t.aminName} theme={currentTheme} accentColor={accentInfo.accent} isDarkMode={isDark} />
-                <NavItem isActive={activeTab === 'settings'} onClick={() => handleTabChange('settings')} icon={<SettingsIcon size={22} />} label={t.settings} theme={currentTheme} accentColor={accentInfo.accent} isDarkMode={isDark} />
-              </>
-            )}
-          </div>
-        </nav>
+        {!isQuranFocusMode && (
+          <nav className={`fixed bottom-4 left-4 right-4 md:left-1/2 md:-translate-x-1/2 md:w-max max-w-[420px] md:max-w-5xl mx-auto rounded-[2rem] border z-50 backdrop-blur-[40px] saturate-[1.5] transition-all duration-500 overflow-hidden ${isDark ? 'bg-zinc-900/50 border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.5)]' : 'bg-white/50 border-white/70 shadow-[0_8px_32px_rgba(31,38,135,0.07)]'}`}>
+            <div className="absolute inset-0 bg-gradient-to-tr from-white/20 via-transparent to-white/10 pointer-events-none rounded-[2rem]"></div>
+            <div className="flex justify-between md:justify-center items-center h-[4.5rem] px-3 md:px-6 w-full relative z-10">
+              {isMobile ? (
+                <>
+                  <NavItem isActive={activeTab === 'home' && !isMenuOpen} onClick={() => handleTabChange('home')} icon={<Home size={22} />} label={isRtlNav ? "الرئيسية" : "Home"} theme={currentTheme} accentColor={accentInfo.accent} isDarkMode={isDark} />
+                  <NavItem isActive={activeTab === 'quran' && !isMenuOpen} onClick={() => handleTabChange('quran')} icon={<BookOpen size={22} />} label="القرآن" theme={currentTheme} accentColor={accentInfo.accent} isDarkMode={isDark} />
+                  <NavItem isActive={activeTab === 'dhikr' && !isMenuOpen} onClick={() => handleTabChange('dhikr')} icon={<Sparkles size={22} />} label={t.athkar} theme={currentTheme} accentColor={accentInfo.accent} isDarkMode={isDark} />
+                  <NavItem isActive={activeTab === 'amin' && !isMenuOpen} onClick={() => handleTabChange('amin')} icon={<MessageSquare size={22} />} label={t.aminName} theme={currentTheme} accentColor={accentInfo.accent} isDarkMode={isDark} />
+                  <NavItem isActive={isMenuOpen || ['quiz', 'duas', 'qibla', 'settings', 'hisn'].includes(activeTab)} onClick={() => setIsMenuOpen(!isMenuOpen)} icon={<LayoutGrid size={22} />} label={isRtlNav ? "المزيد" : "More"} theme={currentTheme} accentColor={accentInfo.accent} isDarkMode={isDark} />
+                </>
+              ) : (
+                <>
+                  <NavItem isActive={activeTab === 'home'} onClick={() => handleTabChange('home')} icon={<Home size={22} />} label={isRtlNav ? "الرئيسية" : "Home"} theme={currentTheme} accentColor={accentInfo.accent} isDarkMode={isDark} />
+                  <NavItem isActive={activeTab === 'quran'} onClick={() => handleTabChange('quran')} icon={<BookOpen size={22} />} label="القرآن الكريم" theme={currentTheme} accentColor={accentInfo.accent} isDarkMode={isDark} />
+                  <NavItem isActive={activeTab === 'hisn'} onClick={() => handleTabChange('hisn')} icon={<Shield size={22} />} label={t.hisn || "حصن المسلم"} theme={currentTheme} accentColor={accentInfo.accent} isDarkMode={isDark} />
+                  <NavItem isActive={activeTab === 'dhikr'} onClick={() => handleTabChange('dhikr')} icon={<Sparkles size={22} />} label={t.athkar} theme={currentTheme} accentColor={accentInfo.accent} isDarkMode={isDark} />
+                  <NavItem isActive={activeTab === 'quiz'} onClick={() => handleTabChange('quiz')} icon={<Trophy size={22} />} label={isRtlNav ? "تحدي" : "Quiz"} theme={currentTheme} accentColor={accentInfo.accent} isDarkMode={isDark} />
+                  <NavItem isActive={activeTab === 'duas'} onClick={() => handleTabChange('duas')} icon={<Heart size={22} />} label={t.duas} theme={currentTheme} accentColor={accentInfo.accent} isDarkMode={isDark} />
+                  <NavItem isActive={activeTab === 'qibla'} onClick={() => handleTabChange('qibla')} icon={<Navigation size={22} />} label={t.qibla} theme={currentTheme} accentColor={accentInfo.accent} isDarkMode={isDark} />
+                  <NavItem isActive={activeTab === 'amin'} onClick={() => handleTabChange('amin')} icon={<MessageSquare size={22} />} label={t.aminName} theme={currentTheme} accentColor={accentInfo.accent} isDarkMode={isDark} />
+                  <NavItem isActive={activeTab === 'settings'} onClick={() => handleTabChange('settings')} icon={<SettingsIcon size={22} />} label={t.settings} theme={currentTheme} accentColor={accentInfo.accent} isDarkMode={isDark} />
+                </>
+              )}
+            </div>
+          </nav>
+        )}
       </Layout>
     </div>
   );

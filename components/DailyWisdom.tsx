@@ -12,7 +12,7 @@ interface DailyWisdomProps {
 }
 
 const DailyWisdom: React.FC<DailyWisdomProps> = ({ translations, language, theme }) => {
-  const inspirations = DAILY_INSPIRATIONS[language] || DAILY_INSPIRATIONS['en'] || [];
+  const inspirations = DAILY_INSPIRATIONS.ar || [];
   const [index, setIndex] = useState(0);
   const isDark = theme === 'dark';
 
@@ -41,7 +41,6 @@ const DailyWisdom: React.FC<DailyWisdomProps> = ({ translations, language, theme
   };
 
   const getTypeName = (type: Inspiration['type']) => {
-    if (language !== 'ar') return type.toUpperCase();
     switch(type) {
       case 'hadith': return "حديث شريف";
       case 'sunnah': return "سنة مهجورة";

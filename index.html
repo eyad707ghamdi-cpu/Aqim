@@ -5,16 +5,50 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>أقِم - تطبيقك الإسلامي</title>
+    <meta name="description" content="تطبيق إسلامي شامل يضم مواقيت الصلاة، الأذكار، القبلة، ومساعد أقِم AI">
+    <meta property="og:title" content="أقِم - تطبيقك الإسلامي">
+    <meta property="og:description" content="تطبيق إسلامي شامل يضم مواقيت الصلاة، الأذكار، القبلة، ومساعد أقِم AI">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cairo:wght@400;700;900&family=Almarai:wght@400;700;800&family=Tajawal:wght@400;700;900&family=Noto+Sans+Arabic:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Amiri+Quran&family=Amiri:wght@400;700&family=Cairo:wght@400;700;900&family=Almarai:wght@400;700;800&family=Tajawal:wght@400;700;900&family=Noto+Sans+Arabic:wght@400;700&family=Noto+Naskh+Arabic:wght@400;700&display=swap" rel="stylesheet">
     <style>
+        @font-face {
+            font-family: 'UthmanicHafs';
+            src: local('KFGQPC HAFS Uthmanic Script'),
+                 url('https://quran.com/fonts/quran/hafs/uthmanic_hafs/UthmanicHafs1Ver18.woff2') format('woff2'),
+                 url('https://quran.com/fonts/quran/hafs/uthmanic_hafs/UthmanicHafs1Ver18.ttf') format('truetype');
+            font-display: swap;
+        }
+        @font-face {
+            font-family: 'surahnames';
+            src: url('https://quran.com/fonts/quran/surah-names/v1/sura_names.woff2') format('woff2'),
+                 url('https://quran.com/fonts/quran/surah-names/v1/sura_names.woff') format('woff');
+            font-weight: 400;
+            font-style: normal;
+            font-display: swap;
+        }
+        @font-face {
+            font-family: 'Kitab';
+            src: url('https://quran.com/fonts/lang/arabic/kitab-base.woff2') format('woff2');
+            font-weight: 400;
+            font-style: normal;
+            font-display: swap;
+        }
         body {
             transition: background-color 0.3s ease, color 0.3s ease;
             -webkit-tap-highlight-color: transparent;
         }
         .arabic-text { font-family: 'Amiri', serif; }
+        .font-quran {
+            font-family: 'UthmanicHafs', 'KFGQPC HAFS Uthmanic Script', 'Amiri Quran', 'Amiri', serif;
+            text-rendering: optimizeLegibility;
+            -webkit-font-smoothing: antialiased;
+            font-feature-settings: "cv01", "cv02";
+        }
+        .font-surah {
+            font-family: 'surahnames', 'Amiri', serif;
+        }
         
         ::-webkit-scrollbar {
           width: 6px;

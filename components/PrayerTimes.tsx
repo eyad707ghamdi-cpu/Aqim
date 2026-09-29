@@ -98,7 +98,7 @@ const PrayerTimes: React.FC<PrayerTimesProps> = ({
     
     if (timeFormat === '12h') {
       const [h, m] = timeStr.split(':').map(Number);
-      suffix = h >= 12 ? (language === 'ar' ? ' م' : ' PM') : (language === 'ar' ? ' ص' : ' AM');
+      suffix = h >= 12 ? ' م' : ' ص';
       const h12 = h % 12 || 12;
       displayTime = `${h12}:${m.toString().padStart(2, '0')}`;
     }
@@ -137,10 +137,10 @@ const PrayerTimes: React.FC<PrayerTimesProps> = ({
         ]);
         
         if (isDefault) {
-          setLocationName(language === 'ar' ? "مكة المكرمة (افتراضي)" : "Makkah (Default)");
+          setLocationName("مكة المكرمة (افتراضي)");
         } else {
           try {
-            const geoRes = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&accept-language=${language}`);
+            const geoRes = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&accept-language=ar`);
             const geoData = await geoRes.json();
             setLocationName(`${geoData.address.city || geoData.address.state || ""}, ${geoData.address.country}`);
           } catch (e) {

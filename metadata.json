@@ -1,6 +1,6 @@
 {
   "name": "أقِم",
-  "description": "A comprehensive Islamic companion app featuring prayer times, a countdown, electronic Tasbih, multi-language support, and an AI religious assistant named Amin.",
+  "description": "A comprehensive Islamic companion app featuring prayer times, a countdown, electronic Tasbih, and an AI religious assistant named Amin.",
   "requestFramePermissions": [
     "geolocation",
     "camera"

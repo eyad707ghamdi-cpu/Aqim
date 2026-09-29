@@ -1,5 +1,5 @@
 
-export type Language = 'ar' | 'en' | 'id' | 'ur' | 'fr' | 'fa' | 'ru' | 'tr' | 'es';
+export type Language = 'ar';
 export type ThemeColor = 'green' | 'blue' | 'brown' | 'purple' | 'indigo' | 'rose' | 'teal' | 'sand' | 'sky' | 'mint' | 'lavender' | 'gold' | 'cream';
 export type TimeFormat = '12h' | '24h';
 export type NumberFormat = 'arabic' | 'latin';
@@ -38,6 +38,19 @@ export interface DuaCategory {
   items: DuaItem[];
 }
 
+export type HisnCategoryType = 'time' | 'state';
+
+export interface HisnDhikrItem {
+  id: string;
+  categoryType: HisnCategoryType;
+  categoryGroup: string;
+  title: string;
+  text: string;
+  source: string;
+  fadl?: string;
+  repeat: number;
+}
+
 export interface Muezzin {
   id: string;
   name: string;
@@ -47,8 +60,35 @@ export interface Muezzin {
 export interface Reciter {
   id: number;
   name: string;
-  subName: string;
-  slug: string;
+  subName?: string;
+  style?: string;
+}
+
+export interface QuranVerse {
+  id: number;
+  verse_key: string;
+  verse_number?: number;
+  text_uthmani: string;
+}
+
+export interface QuranBookmark {
+  chapterId: number;
+  chapterName: string;
+  verseNumber: number;
+  verseKey: string;
+  textSnippet: string;
+  timestamp: number;
+}
+
+export interface QuranKhatmah {
+  planType: 'days' | 'pages'; // تحديد بعدد الأيام أو الصفحات اليومية
+  targetDays: number; // مثلاً 30 يوماً
+  dailyPages: number; // مثلاً 20 صفحة
+  currentPage: number; // 0 إلى 604
+  startDate: number; // وقت البدء
+  lastUpdated?: number;
+  completed: boolean;
+  completedAt?: number;
 }
 
 export interface PrayerTime {

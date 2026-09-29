@@ -16,11 +16,11 @@ const Duas: React.FC<DuasProps> = ({ translations, language, theme, numberFormat
   const [activeCategory, setActiveCategory] = useState<string>('prophetic');
   const [copiedId, setCopiedId] = useState<string | null>(null);
   
-  const categories = DUAS_DATA[language] || DUAS_DATA['en'] || [];
+  const categories = DUAS_DATA.ar || [];
   const currentCategory = categories.find(c => c.id === activeCategory) || categories[0];
   
   const isDark = theme === 'dark';
-  const isRtl = language === 'ar' || language === 'ur';
+  const isRtl = true;
 
   const handleCopy = (text: string, id: string) => {
     navigator.clipboard.writeText(text);

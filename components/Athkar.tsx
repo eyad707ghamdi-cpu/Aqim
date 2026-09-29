@@ -16,10 +16,10 @@ const Athkar: React.FC<AthkarProps> = ({ translations, language, theme, numberFo
   const [selectedCategory, setSelectedCategory] = useState<AthkarCategory | null>(null);
   const [counts, setCounts] = useState<Record<string, number>>({});
   const currentTheme = THEMES[theme];
-  const isRtl = language === 'ar' || language === 'ur';
+  const isRtl = true;
   const activeNumberFormat = numberFormat as NumberFormat;
 
-  const categories = ATHKAR_DATA[language] || ATHKAR_DATA['en'];
+  const categories = ATHKAR_DATA.ar;
 
   useEffect(() => {
     if (selectedCategory) window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -76,9 +76,9 @@ const Athkar: React.FC<AthkarProps> = ({ translations, language, theme, numberFo
         <button key={cat.id} onClick={() => setSelectedCategory(cat)} className={`${currentTheme.card} p-12 sm:p-16 border ${theme === 'dark' ? 'border-zinc-800' : 'border-gray-100'} rounded-[3.5rem] hover:scale-[1.03] transition-all group flex items-center justify-between relative overflow-hidden shadow-sm hover:shadow-xl`}>
           <div className="relative z-10 text-right">
             <h3 className={`text-3xl sm:text-4xl font-black ${currentTheme.textMain} mb-3`}>{cat.title}</h3>
-            <p className={`text-lg font-bold ${currentTheme.textMuted} flex items-center gap-2`}><span className={`w-3 h-3 rounded-full ${currentTheme.primary}`} />{formatDigits(cat.items.length, activeNumberFormat)} {language === 'ar' ? 'ذكراً' : 'items'}</p>
+            <p className={`text-lg font-bold ${currentTheme.textMuted} flex items-center gap-2`}><span className={`w-3 h-3 rounded-full ${currentTheme.primary}`} />{formatDigits(cat.items.length, activeNumberFormat)} ذكراً</p>
           </div>
-          <div className={`p-6 rounded-[2rem] ${currentTheme.secondary} ${currentTheme.accent} group-hover:scale-110 transition-transform`}>{isRtl ? <ChevronLeft size={32} /> : <ChevronRight size={32} />}</div>
+          <div className={`p-6 rounded-[2rem] ${currentTheme.secondary} ${currentTheme.accent} group-hover:scale-110 transition-transform`}><ChevronLeft size={32} /></div>
         </button>
       ))}
     </div>
